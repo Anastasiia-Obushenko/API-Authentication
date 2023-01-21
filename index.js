@@ -8,13 +8,15 @@ const authRoute = require('./routes/auth');
 
 dotenv.config();
 
+mongoose.set('strictQuery', true);
+
 // Connect to DB
 mongoose.connect(
-    process.env.DB_CONNECT,
+    process.env.DB_CONNECT, { useNewUrlParser: true },
     () => console.log("connected to db")
 );
 
-// Middlewere
+// Middleware
 app.use(express.json());
 
 //Route Middlewares
