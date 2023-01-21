@@ -1,11 +1,14 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 // Connect to DB
 
 mongoose.connect(
-    "mongodb+srv://<username>:<password>@clusterauth.axwtj04.mongodb.net/?retryWrites=true&w=majority",
+    process.env.DB_CONNECT,
     () => console.log("connected to db")
 );
 
