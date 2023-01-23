@@ -2,6 +2,7 @@ const router = require('express').Router();
 const User = require('../model/User');
 const { registerValidation, loginValidation } = require('../validation');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 router.post('/register', async (req, res) => {
     // Validate
@@ -22,7 +23,7 @@ router.post('/register', async (req, res) => {
 
     try {
         const savedUser = await user.save();
-        res.send({user: user._id});
+        res.send({ user: user._id });
     } catch (err) {
         res.status(400).send(err);
     }
@@ -36,9 +37,12 @@ router.post('/login', async (req, res) => {
     const user = await User.findOne({ email: req.body.email });
     if (!user) { return res.status(400).send('Email is not found'); }
     // Password check
-    const validPass = await bcrypt.compare(req.body.password, user.password)
+    const validPass = await bcrypt.compare(req.body.password, user.password);
     if (!validPass) { return res.status(400).send('Invalid password'); }
-    res.send('Logged in')
+    // Create and assign a token
+    const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET);
+    res.header('auth-token', token).send(token);
 
+    // res.send('Logged in');
 });
 module.exports = router;
